@@ -1,15 +1,18 @@
-package com.abahafart.infra.repository;
+package com.abahafart.infra.repository.entity;
 
 import java.time.Instant;
 
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
+import io.quarkus.hibernate.reactive.panache.PanacheEntityBase;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 @Cacheable
 public class AddressEntity extends PanacheEntity {
-
   private String street;
   private String number;
   private String neighborhood;

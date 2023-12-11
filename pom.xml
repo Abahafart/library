@@ -17,6 +17,7 @@
     <quarkus.platform.version>3.6.1</quarkus.platform.version>
     <skipITs>true</skipITs>
     <surefire-plugin.version>3.1.2</surefire-plugin.version>
+    <lombok.version>1.18.30</lombok.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -31,9 +32,12 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
-      <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-resteasy-reactive-jackson</artifactId>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>${lombok.version}</version>
+      <scope>provided</scope>
     </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-hibernate-reactive-panache</artifactId>
