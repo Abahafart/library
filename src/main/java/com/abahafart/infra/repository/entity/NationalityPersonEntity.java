@@ -7,9 +7,9 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Getter
 @Setter
+@Entity(name = "tbl_nationality")
 public class NationalityPersonEntity extends PanacheEntity {
 
   private Instant createdAt;

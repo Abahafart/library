@@ -7,4 +7,5 @@ import io.smallrye.mutiny.Uni;
 public interface CountryService {
 
   Uni<CountryDO> create(CountryDO countryDO);
+  Uni<CountryDO> getByName(String name);
 }

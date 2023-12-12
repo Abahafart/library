@@ -10,6 +10,6 @@ public interface CountryRepository {
 
   Uni<CountryDO> getCountryByName(String name);
   Uni<CountryDO> getById(long id);
-  Uni<List<CountryDO>> findAll();
+  Uni<List<CountryDO>> findAllRecords();
   Uni<CountryDO> create(CountryDO country);
 }

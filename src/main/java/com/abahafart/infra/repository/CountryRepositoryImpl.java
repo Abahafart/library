@@ -8,28 +8,31 @@ import com.abahafart.domain.repository.CountryRepository;
 import com.abahafart.infra.repository.entity.CountryEntity;
 
 import io.quarkus.hibernate.reactive.panache.Panache;
+import io.quarkus.hibernate.reactive.panache.PanacheRepository;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-public class CountryRepositoryImpl implements CountryRepository {
+public class CountryRepositoryImpl implements CountryRepository, PanacheRepository<CountryEntity> {
 
   @Override
+  @WithSession
   public Uni<CountryDO> getCountryByName(String name) {
-    Uni<CountryEntity> countryEntityUni = CountryEntity.find("name", name).firstResult();
+    Uni<CountryEntity> countryEntityUni = this.find("name", name).firstResult();
     return countryEntityUni.onItem().transform(this::buildCountry);
   }
 
   @Override
   public Uni<CountryDO> getById(long id) {
-    Uni<CountryEntity> countryEntityUni = CountryEntity.findById(id);
+    Uni<CountryEntity> countryEntityUni = this.findById(id);
     return countryEntityUni.onItem().transform(this::buildCountry);
   }
 
   @Override
-  public Uni<List<CountryDO>> findAll() {
-    Uni<List<CountryEntity>> allRecords = CountryEntity.listAll(Sort.by("name"));
+  public Uni<List<CountryDO>> findAllRecords() {
+    Uni<List<CountryEntity>> allRecords = this.listAll(Sort.by("name"));
     return allRecords.onItem().transform(countryEntities ->
       countryEntities.stream().map(this::buildCountry).toList());
   }
@@ -41,7 +44,8 @@ public class CountryRepositoryImpl implements CountryRepository {
     entity.setName(country.getName());
     entity.setDescription(country.getDescription());
     entity.setShortVersion(country.getShortVersion());
-    Uni<CountryEntity> created = Panache.withTransaction(entity::persist);
+    entity.setUpdatedAt(Instant.now());
+    Uni<CountryEntity> created = Panache.withTransaction(() -> this.persist(entity));
     return created.onItem().transform(this::buildCountry);
   }
 
@@ -51,7 +55,7 @@ public class CountryRepositoryImpl implements CountryRepository {
         .shortVersion(entity.getShortVersion())
         .description(entity.getDescription())
         .createdAt(entity.getCreatedAt())
-        .id(entity.id)
+        .id(entity.getId())
         .name(entity.getName())
         .build();
   }

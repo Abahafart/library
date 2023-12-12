@@ -6,10 +6,10 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Cacheable
 @Getter
 @Setter
+@Entity(name = "tbl_status")
 public class StatusEntity extends PanacheEntity {
 
   private String description;

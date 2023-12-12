@@ -20,4 +20,9 @@ public class CountryServiceImpl implements CountryService {
   public Uni<CountryDO> create(CountryDO countryDO) {
     return countryRepository.create(countryDO);
   }
+
+  @Override
+  public Uni<CountryDO> getByName(String name) {
+    return countryRepository.getCountryByName(name);
+  }
 }

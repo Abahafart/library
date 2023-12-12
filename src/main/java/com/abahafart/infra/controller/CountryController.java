@@ -12,8 +12,10 @@ import com.abahafart.infra.service.CountryService;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
+import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
@@ -34,12 +36,25 @@ public class CountryController {
         .createdAt(Instant.now())
         .updatedAt(Instant.now()).build();
     return service.create(countryDO).log().onItem().transform(countryDO1 -> RestResponse.status(
-        Status.CREATED, CountryResponse.builder()
-                .id(countryDO1.getId())
-                .name(countryDO1.getName())
-                .updatedAt(countryDO1.getUpdatedAt())
-                .shortVersion(countryDO1.getShortVersion())
-                .description(countryDO1.getDescription())
-            .build()));
+        Status.CREATED, buildResponse(countryDO1)));
+  }
+
+  @GET
+  @Path(("/{name}"))
+  @Produces(MediaType.APPLICATION_JSON)
+  public Uni<RestResponse<CountryResponse>> getByCountryName(@PathParam("name") String name) {
+    return service.getByName(name).onItem().transform(countryDO -> RestResponse.status(Status.FOUND,
+        buildResponse(countryDO)));
+  }
+
+  private CountryResponse buildResponse(CountryDO countryDO) {
+    return CountryResponse.builder()
+        .id(countryDO.getId())
+        .name(countryDO.getName())
+        .updatedAt(countryDO.getUpdatedAt())
+        .shortVersion(countryDO.getShortVersion())
+        .description(countryDO.getDescription())
+        .createdAt(countryDO.getCreatedAt())
+        .build();
   }
 }

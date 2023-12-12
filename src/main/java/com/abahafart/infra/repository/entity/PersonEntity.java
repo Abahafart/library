@@ -9,10 +9,10 @@ import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Cacheable
 @Getter
 @Setter
+@Entity(name = "tbl_person")
 public class PersonEntity extends PanacheEntity {
 
   private String name;
