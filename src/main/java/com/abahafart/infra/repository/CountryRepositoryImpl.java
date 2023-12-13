@@ -25,12 +25,14 @@ public class CountryRepositoryImpl implements CountryRepository, PanacheReposito
   }
 
   @Override
+  @WithSession
   public Uni<CountryDO> getById(long id) {
     Uni<CountryEntity> countryEntityUni = this.findById(id);
     return countryEntityUni.onItem().transform(this::buildCountry);
   }
 
   @Override
+  @WithSession
   public Uni<List<CountryDO>> findAllRecords() {
     Uni<List<CountryEntity>> allRecords = this.listAll(Sort.by("name"));
     return allRecords.onItem().transform(countryEntities ->
@@ -50,6 +52,9 @@ public class CountryRepositoryImpl implements CountryRepository, PanacheReposito
   }
 
   private CountryDO buildCountry(CountryEntity entity) {
+    if (entity == null) {
+      return CountryDO.builder().build();
+    }
     return CountryDO.builder()
         .updatedAt(entity.getUpdatedAt())
         .shortVersion(entity.getShortVersion())
