@@ -9,7 +9,7 @@ import org.jboss.resteasy.reactive.RestResponse.Status;
 import com.abahafart.domain.model.CountryDO;
 import com.abahafart.infra.controller.request.CountryRequest;
 import com.abahafart.infra.controller.response.CountryResponse;
-import com.abahafart.infra.service.CountryService;
+import com.abahafart.domain.service.CountryService;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.Consumes;
@@ -21,8 +21,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Path("/countries")
+@RequiredArgsConstructor
 public class CountryController {
 
   private final CountryService service;

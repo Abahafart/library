@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.abahafart.domain.model.CountryDO;
 import com.abahafart.domain.repository.CountryRepository;
-import com.abahafart.infra.service.CountryService;
 
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;

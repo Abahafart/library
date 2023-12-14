@@ -5,6 +5,8 @@ import java.time.Instant;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import jakarta.persistence.Cacheable;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +14,9 @@ import lombok.Setter;
 @Setter
 @Cacheable
 @Entity(name = "tbl_address")
-public class AddressEntity extends PanacheEntity {
+public class AddressEntity {
+  @Id @GeneratedValue
+  private Long id;
   private String street;
   private String number;
   private String neighborhood;

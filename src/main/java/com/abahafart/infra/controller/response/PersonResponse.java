@@ -1,4 +1,4 @@
-package com.abahafart.domain.model;
+package com.abahafart.infra.controller.response;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PersonDO {
+public class PersonResponse {
 
   private Long id;
   private String name;
