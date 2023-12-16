@@ -22,21 +22,6 @@ public class PersonServiceImpl implements PersonService {
   }
 
   @Override
-  public Uni<PersonDO> getById(long id) {
-    return personRepository.getById(id);
-  }
-
-  @Override
-  public Uni<List<PersonDO>> findAllByName(String name) {
-    return personRepository.findAllByName(name);
-  }
-
-  @Override
-  public Uni<List<PersonDO>> findAllByFullName(String fullName) {
-    return personRepository.findAllByFullName(fullName);
-  }
-
-  @Override
   public Uni<List<PersonDO>> findAll(Map<String, Object> filters) {
     return personRepository.findAllRecords(filters);
   }

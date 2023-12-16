@@ -1,6 +1,7 @@
 package com.abahafart.domain.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.abahafart.domain.model.CountryDO;
 import com.abahafart.domain.repository.CountryRepository;
@@ -23,17 +24,7 @@ public class CountryServiceImpl implements CountryService {
   }
 
   @Override
-  public Uni<CountryDO> getByName(String name) {
-    return countryRepository.getCountryByName(name);
-  }
-
-  @Override
-  public Uni<List<CountryDO>> findAllRecords() {
-    return countryRepository.findAllRecords();
-  }
-
-  @Override
-  public Uni<CountryDO> getById(long id) {
-    return countryRepository.getById(id);
+  public Uni<List<CountryDO>> findAll(Map<String, Object> filters) {
+    return countryRepository.findAllRecords(filters);
   }
 }

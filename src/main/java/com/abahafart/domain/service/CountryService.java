@@ -1,6 +1,7 @@
 package com.abahafart.domain.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.abahafart.domain.model.CountryDO;
 
@@ -9,7 +10,5 @@ import io.smallrye.mutiny.Uni;
 public interface CountryService {
 
   Uni<CountryDO> create(CountryDO countryDO);
-  Uni<CountryDO> getByName(String name);
-  Uni<List<CountryDO>> findAllRecords();
-  Uni<CountryDO> getById(long id);
+  Uni<List<CountryDO>> findAll(Map<String, Object> filters);
 }

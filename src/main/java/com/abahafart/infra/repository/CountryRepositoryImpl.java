@@ -2,6 +2,7 @@ package com.abahafart.infra.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import com.abahafart.domain.model.CountryDO;
 import com.abahafart.domain.repository.CountryRepository;
@@ -9,35 +10,17 @@ import com.abahafart.infra.repository.entity.CountryEntity;
 
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
-import io.quarkus.hibernate.reactive.panache.common.WithSession;
-import io.quarkus.panache.common.Sort;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
+@RequiredArgsConstructor
 public class CountryRepositoryImpl implements CountryRepository, PanacheRepository<CountryEntity> {
 
-  @Override
-  @WithSession
-  public Uni<CountryDO> getCountryByName(String name) {
-    Uni<CountryEntity> countryEntityUni = this.find("name", name).firstResult();
-    return countryEntityUni.onItem().transform(this::buildCountry);
-  }
-
-  @Override
-  @WithSession
-  public Uni<CountryDO> getById(long id) {
-    Uni<CountryEntity> countryEntityUni = this.findById(id);
-    return countryEntityUni.onItem().transform(this::buildCountry);
-  }
-
-  @Override
-  @WithSession
-  public Uni<List<CountryDO>> findAllRecords() {
-    Uni<List<CountryEntity>> allRecords = this.listAll(Sort.by("name"));
-    return allRecords.onItem().transform(countryEntities ->
-      countryEntities.stream().map(this::buildCountry).toList());
-  }
+  private final GeneralRepository generalRepository;
 
   @Override
   public Uni<CountryDO> create(CountryDO country) {
@@ -49,6 +32,14 @@ public class CountryRepositoryImpl implements CountryRepository, PanacheReposito
     entity.setUpdatedAt(Instant.now());
     Uni<CountryEntity> created = Panache.withTransaction(() -> this.persist(entity));
     return created.onItem().transform(this::buildCountry);
+  }
+
+  @Override
+  public Uni<List<CountryDO>> findAllRecords(Map<String, Object> filters) {
+    Map<String, Object> filtersWithOutNulls = generalRepository.withOutValuesNull(filters);
+    String query = generalRepository.buildQuery(filtersWithOutNulls);
+    Uni<List<CountryEntity>> listUni = Panache.withTransaction(() -> this.list(query.substring(0, query.length()-5), filtersWithOutNulls));
+    return listUni.onItem().transform(personList -> personList.stream().map(this::buildCountry).toList());
   }
 
   private CountryDO buildCountry(CountryEntity entity) {
