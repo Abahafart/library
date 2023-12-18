@@ -19,4 +19,6 @@ public class AddressDO {
   private Instant createdAt;
   private long idPerson;
   private long idCountry;
+  private CountryDO countryDO;
+  private PersonDO personDO;
 }

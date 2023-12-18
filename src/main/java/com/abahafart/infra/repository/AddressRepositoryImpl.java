@@ -2,6 +2,7 @@ package com.abahafart.infra.repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import com.abahafart.domain.model.AddressDO;
 import com.abahafart.domain.repository.AddressRepository;
@@ -11,15 +12,15 @@ import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @ApplicationScoped
+@RequiredArgsConstructor
 public class AddressRepositoryImpl implements AddressRepository, PanacheRepository<AddressEntity> {
 
-  @Override
-  public Uni<AddressDO> getAddressByPersonId(long idPerson) {
-    Uni<AddressEntity> addressEntityUni = this.find("idPerson", idPerson).firstResult();
-    return addressEntityUni.onItem().transform(this::buildAddress);
-  }
+  private final GeneralRepository generalRepository;
 
   @Override
   public Uni<AddressDO> create(AddressDO address) {
@@ -38,9 +39,11 @@ public class AddressRepositoryImpl implements AddressRepository, PanacheReposito
   }
 
   @Override
-  public Uni<List<AddressDO>> getAddressByCountryId(long idCountry) {
-    Uni<List<AddressEntity>> listUni = this.list("idCountry", idCountry);
-    return listUni.onItem().transform(list -> list.stream().map(this::buildAddress).toList());
+  public Uni<List<AddressDO>> findAllRecords(Map<String, Object> filters) {
+    Map<String, Object> withOutNulls = generalRepository.withOutValuesNull(filters);
+    String query = generalRepository.buildQuery(withOutNulls);
+    Uni<List<AddressEntity>> listAddress = Panache.withTransaction(() -> this.list(query, withOutNulls));
+    return listAddress.log().onItem().transform(addressEntities -> addressEntities.stream().map(this::buildAddress).toList());
   }
 
   private AddressDO buildAddress(AddressEntity entity) {
