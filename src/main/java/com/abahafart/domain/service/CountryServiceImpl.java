@@ -27,4 +27,9 @@ public class CountryServiceImpl implements CountryService {
   public Uni<List<CountryDO>> findAll(Map<String, Object> filters) {
     return countryRepository.findAllRecords(filters);
   }
+
+  @Override
+  public Uni<CountryDO> getById(Long id) {
+    return null;
+  }
 }

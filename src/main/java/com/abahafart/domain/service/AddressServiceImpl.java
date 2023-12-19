@@ -5,6 +5,7 @@ import static com.abahafart.domain.service.constants.ConstantService.ID_COUNTRY;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import com.abahafart.domain.model.AddressDO;
 import com.abahafart.domain.model.CountryDO;
@@ -32,11 +33,16 @@ public class AddressServiceImpl implements AddressService {
   @Override
   public Uni<List<AddressDO>> findAll(Map<String, Object> filters) {
     Uni<List<AddressDO>> listAddress = addressRepository.findAllRecords(filters);
-    if (filters.containsKey(ID_COUNTRY)) {
-      Map<String, Object> countryFilter = new HashMap<>();
-      countryFilter.put(ID_COUNTRY, filters.get(ID_COUNTRY));
-      Uni<List<CountryDO>> listCountries = countryRepository.findAllRecords(countryFilter);
-    }
-    return null;
+    buildDO(listAddress);
+    return listAddress;
+  }
+
+  private void buildDO(Uni<List<AddressDO>> list) {
+    list.invoke(list1 -> {
+      list1.forEach(addressDO -> {
+        Uni<CountryDO> countryDOUni = countryRepository.getById(addressDO.getIdCountry());
+        addressDO.setCountryDO(countryDOUni);
+      });
+    });
   }
 }

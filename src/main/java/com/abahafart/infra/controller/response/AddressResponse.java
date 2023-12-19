@@ -1,4 +1,4 @@
-package com.abahafart.domain.model;
+package com.abahafart.infra.controller.response;
 
 import java.time.Instant;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class AddressDO {
+public class AddressResponse {
 
   private long id;
   private String street;
@@ -20,6 +20,6 @@ public class AddressDO {
   private Instant createdAt;
   private long idPerson;
   private long idCountry;
-  private Uni<CountryDO> countryDO;
-  private PersonDO personDO;
+  private Uni<CountryResponse> country;
+  private Uni<PersonResponse> person;
 }

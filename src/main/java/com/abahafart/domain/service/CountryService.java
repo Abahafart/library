@@ -11,4 +11,5 @@ public interface CountryService {
 
   Uni<CountryDO> create(CountryDO countryDO);
   Uni<List<CountryDO>> findAll(Map<String, Object> filters);
+  Uni<CountryDO> getById(Long id);
 }

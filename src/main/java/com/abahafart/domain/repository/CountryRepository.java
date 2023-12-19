@@ -10,4 +10,5 @@ import io.smallrye.mutiny.Uni;
 public interface CountryRepository {
   Uni<CountryDO> create(CountryDO country);
   Uni<List<CountryDO>> findAllRecords(Map<String, Object> filters);
+  Uni<CountryDO> getById(Long id);
 }

@@ -32,7 +32,7 @@ public class PersonRepositoryImpl implements PersonRepository, PanacheRepository
   public Uni<List<PersonDO>> findAllRecords(Map<String, Object> filters) {
     Map<String, Object> filtersWithOutNulls = generalRepository.withOutValuesNull(filters);
     String query = generalRepository.buildQuery(filtersWithOutNulls);
-    Uni<List<PersonEntity>> listUni = Panache.withTransaction(() -> this.list(query.substring(0, query.length()-5), filtersWithOutNulls));
+    Uni<List<PersonEntity>> listUni = Panache.withTransaction(() -> this.list(query, filtersWithOutNulls));
     return listUni.onItem().transform(personList -> personList.stream().map(this::buildDO).toList());
   }
 
