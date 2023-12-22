@@ -1,5 +1,6 @@
 package com.abahafart.infra.repository;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
@@ -23,7 +24,19 @@ public class GeneralRepositoryImpl implements GeneralRepository {
 
   @Override
   public Map<String, Object> withOutValuesNull(Map<String, Object> filters) {
-    return filters.entrySet().stream().filter(entry -> entry.getValue() != null).collect(
-        Collectors.toMap(Entry::getKey, Entry::getValue));
+    Map<String, Object> cleanFilters = new HashMap<>();
+    filters.forEach((key, value) -> {
+      if (value != null) {
+        if (value instanceof Long) {
+          long longValue = (long) value;
+          if (longValue != 0) {
+            cleanFilters.put(key, value);
+          }
+        } else {
+          cleanFilters.put(key, value);
+        }
+      }
+    });
+    return cleanFilters;
   }
 }

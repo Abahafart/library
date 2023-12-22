@@ -20,6 +20,6 @@ public class AddressDO {
   private Instant createdAt;
   private long idPerson;
   private long idCountry;
-  private Uni<CountryDO> countryDO;
-  private PersonDO personDO;
+  private CountryDO country;
+  private PersonDO person;
 }

@@ -1,17 +1,14 @@
 package com.abahafart.domain.service;
 
-import static com.abahafart.domain.service.constants.ConstantService.ID_COUNTRY;
-
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 
 import com.abahafart.domain.model.AddressDO;
 import com.abahafart.domain.model.CountryDO;
 import com.abahafart.domain.repository.AddressRepository;
 import com.abahafart.domain.repository.CountryRepository;
 
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.RequiredArgsConstructor;
@@ -33,16 +30,21 @@ public class AddressServiceImpl implements AddressService {
   @Override
   public Uni<List<AddressDO>> findAll(Map<String, Object> filters) {
     Uni<List<AddressDO>> listAddress = addressRepository.findAllRecords(filters);
-    buildDO(listAddress);
-    return listAddress;
+    Uni<List<CountryDO>> countryUniList = listAddress.log().onItem().ifNotNull().transformToUni(
+        (addressList, uniEmitter) -> addressList.stream().map(this::fromAddress).toList());
+    return Uni.combine().all().unis(listAddress, countryUniList)
+        .with(this::createListAddress);
   }
 
-  private void buildDO(Uni<List<AddressDO>> list) {
-    list.invoke(list1 -> {
-      list1.forEach(addressDO -> {
-        Uni<CountryDO> countryDOUni = countryRepository.getById(addressDO.getIdCountry());
-        addressDO.setCountryDO(countryDOUni);
-      });
-    });
+  private List<AddressDO> createListAddress(List<AddressDO> addressList, List<CountryDO> countryList) {
+    return addressList.stream().peek(addressDO -> countryList.forEach(countryDO -> {
+      if (countryDO.getId() == addressDO.getIdCountry()) {
+        addressDO.setCountry(countryDO);
+      }
+    })).toList();
+  }
+
+  private Uni<CountryDO> fromAddress(AddressDO addressDO) {
+    return countryRepository.getById(addressDO.getIdCountry());
   }
 }

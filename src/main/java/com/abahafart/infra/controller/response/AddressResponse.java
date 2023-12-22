@@ -20,6 +20,6 @@ public class AddressResponse {
   private Instant createdAt;
   private long idPerson;
   private long idCountry;
-  private Uni<CountryResponse> country;
-  private Uni<PersonResponse> person;
+  private CountryResponse country;
+  private PersonResponse person;
 }

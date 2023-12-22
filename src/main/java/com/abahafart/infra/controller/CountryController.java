@@ -9,6 +9,7 @@ import org.jboss.resteasy.reactive.RestResponse.Status;
 
 import com.abahafart.domain.model.CountryDO;
 import com.abahafart.infra.controller.filter.CountryFilter;
+import com.abahafart.infra.controller.mapper.GeneralMapper;
 import com.abahafart.infra.controller.request.CountryRequest;
 import com.abahafart.infra.controller.response.CountryResponse;
 import com.abahafart.domain.service.CountryService;
@@ -34,6 +35,7 @@ public class CountryController {
 
   private final CountryService service;
   private final ObjectMapper objectMapper;
+  private final GeneralMapper generalMapper;
 
   @POST
   public Uni<RestResponse<CountryResponse>> create(CountryRequest request) {
@@ -43,24 +45,13 @@ public class CountryController {
         .createdAt(Instant.now())
         .updatedAt(Instant.now()).build();
     return service.create(countryDO).log().onItem().transform(countryDO1 -> RestResponse.status(
-        Status.CREATED, buildResponse(countryDO1)));
+        Status.CREATED, generalMapper.buildCountryResponse(countryDO1)));
   }
 
   @GET
   public Uni<RestResponse<List<CountryResponse>>> findAll(@BeanParam CountryFilter countryFilter) {
     Map<String, Object> filters = objectMapper.convertValue(countryFilter, new TypeReference<>() {});
     return service.findAll(filters).onItem().transform(countryList -> RestResponse.status(Status.OK,
-        countryList.stream().map(this::buildResponse).toList()));
-  }
-
-  private CountryResponse buildResponse(CountryDO countryDO) {
-    return CountryResponse.builder()
-        .id(countryDO.getId())
-        .name(countryDO.getName())
-        .updatedAt(countryDO.getUpdatedAt())
-        .shortVersion(countryDO.getShortVersion())
-        .description(countryDO.getDescription())
-        .createdAt(countryDO.getCreatedAt())
-        .build();
+        countryList.stream().map(generalMapper::buildCountryResponse).toList()));
   }
 }

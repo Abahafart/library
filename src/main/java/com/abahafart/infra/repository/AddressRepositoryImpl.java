@@ -50,6 +50,7 @@ public class AddressRepositoryImpl implements AddressRepository, PanacheReposito
     return AddressDO.builder()
         .id(entity.getId())
         .state(entity.getState())
+        .street(entity.getStreet())
         .number(entity.getNumber())
         .zipCode(entity.getZipCode())
         .neighborhood(entity.getNeighborhood())
