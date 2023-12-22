@@ -38,13 +38,13 @@ public class CountryRepositoryImpl implements CountryRepository, PanacheReposito
   public Uni<List<CountryDO>> findAllRecords(Map<String, Object> filters) {
     Map<String, Object> filtersWithOutNulls = generalRepository.withOutValuesNull(filters);
     String query = generalRepository.buildQuery(filtersWithOutNulls);
-    Uni<List<CountryEntity>> listUni = Panache.withTransaction(() -> this.list(query, filtersWithOutNulls));
+    Uni<List<CountryEntity>> listUni = this.list(query, filtersWithOutNulls);
     return listUni.onItem().transform(personList -> personList.stream().map(this::buildCountry).toList());
   }
 
   @Override
   public Uni<CountryDO> getById(Long id) {
-    return Panache.withTransaction(() -> this.findById(id).map(this::buildCountry));
+    return this.findById(id).map(this::buildCountry);
   }
 
   private CountryDO buildCountry(CountryEntity entity) {

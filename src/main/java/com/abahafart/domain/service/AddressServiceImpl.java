@@ -23,11 +23,13 @@ public class AddressServiceImpl implements AddressService {
   private final CountryRepository countryRepository;
 
   @Override
+  @WithSession
   public Uni<AddressDO> create(AddressDO addressDO) {
     return addressRepository.create(addressDO);
   }
 
   @Override
+  @WithSession
   public Uni<List<AddressDO>> findAll(Map<String, Object> filters) {
     Uni<List<AddressDO>> listAddress = addressRepository.findAllRecords(filters);
     Uni<List<CountryDO>> countryUniList = listAddress.log().onItem().ifNotNull().transformToUni(

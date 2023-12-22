@@ -34,7 +34,7 @@ public class AddressRepositoryImpl implements AddressRepository, PanacheReposito
     entity.setState(address.getState());
     entity.setStreet(address.getStreet());
     entity.setZipCode(address.getZipCode());
-    Uni<AddressEntity> created = Panache.withTransaction(() -> this.persist(entity));
+    Uni<AddressEntity> created = this.persist(entity);
     return created.onItem().transform(this::buildAddress);
   }
 
@@ -42,7 +42,7 @@ public class AddressRepositoryImpl implements AddressRepository, PanacheReposito
   public Uni<List<AddressDO>> findAllRecords(Map<String, Object> filters) {
     Map<String, Object> withOutNulls = generalRepository.withOutValuesNull(filters);
     String query = generalRepository.buildQuery(withOutNulls);
-    Uni<List<AddressEntity>> listAddress = Panache.withTransaction(() -> this.list(query, withOutNulls));
+    Uni<List<AddressEntity>> listAddress = this.list(query, withOutNulls);
     return listAddress.log().onItem().transform(addressEntities -> addressEntities.stream().map(this::buildAddress).toList());
   }
 

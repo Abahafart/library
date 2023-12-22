@@ -24,7 +24,7 @@ public class PersonRepositoryImpl implements PersonRepository, PanacheRepository
 
   @Override
   public Uni<PersonDO> create(PersonDO personDO) {
-    Uni<PersonEntity> created = Panache.withTransaction(() -> this.persist(buildEntity(personDO)));
+    Uni<PersonEntity> created = this.persist(buildEntity(personDO));
     return created.onItem().transform(this::buildDO);
   }
 
@@ -32,7 +32,7 @@ public class PersonRepositoryImpl implements PersonRepository, PanacheRepository
   public Uni<List<PersonDO>> findAllRecords(Map<String, Object> filters) {
     Map<String, Object> filtersWithOutNulls = generalRepository.withOutValuesNull(filters);
     String query = generalRepository.buildQuery(filtersWithOutNulls);
-    Uni<List<PersonEntity>> listUni = Panache.withTransaction(() -> this.list(query, filtersWithOutNulls));
+    Uni<List<PersonEntity>> listUni = this.list(query, filtersWithOutNulls);
     return listUni.onItem().transform(personList -> personList.stream().map(this::buildDO).toList());
   }
 
